@@ -1,33 +1,43 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
+import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
 ApplicationWindow {
+    id: ui
     title: qsTr("Hello World")
     width: 640
     height: 480
     visible: true
 
-    menuBar: MenuBar {
-        Menu {
-            title: qsTr("&File")
-            MenuItem {
-                text: qsTr("&Open")
-                onTriggered: messageDialog.show(qsTr("Open action triggered"));
+    toolBar: ToolBar {
+        RowLayout {
+            anchors.fill: parent
+            ToolButton {
+                text: "Back"
+                visible: stackView.depth > 1
+                onClicked: {
+                    stackView.pop()
+                }
             }
-            MenuItem {
-                text: qsTr("E&xit")
-                onTriggered: Qt.quit();
-            }
+        }
+        Text {
+            id: title
+            text: qsTr("Album View")
+            anchors.centerIn: parent
         }
     }
 
-    MainForm {
+    StackView {
+        id: stackView
         anchors.fill: parent
-        button1.onClicked: messageDialog.show(qsTr("Button 1 pressed"))
-        button2.onClicked: messageDialog.show(qsTr("Button 2 pressed"))
-        button3.onClicked: messageDialog.show(qsTr("Button 3 pressed"))
+        initialItem: AlbumView {
+            onItemSelected: {
+                stackView.push({ item: "qrc:/DiscView.qml", properties : { urlSource : url}})
+            }
+        }
+        //        Component.onCompleted: push("qrc:/AlbumView.qml")
     }
 
     MessageDialog {
